@@ -1,25 +1,36 @@
 import React from 'react';
 import AllPosts from './AllPosts';
-import MySubreddits from './MySubreddits';
+// import Subreddit from './Subreddit';
 import Search from './Search';
 
 class RedditReader extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-      subreddits: ['News', 'Funny', 'Gifs'],
-      searchResults: []
-    }
+      subreddits: [
+        {id: 0, name: 'News'},
+        {id: 1, name: 'Funny'},
+        {id: 2, name: 'Gifs'}       
+      ]
+    };
 
     this.addSubreddit = this.addSubreddit.bind(this);
+    this.delete = this.delete.bind(this);
     this.searchForSubreddit = this.searchForSubreddit.bind(this);
-    this.removeSubreddit = this.removeSubreddit.bind(this);
   }
 
   addSubreddit(subreddit) {
     const subreddits = this.state.subreddits;
-    subreddits.push(subreddit);
+    const nextId = Number(subreddits.length);
+    const sub = {name: subreddit, id: nextId};
+    subreddits.push(sub);
     this.setState({subreddits});
+  }
+
+  delete(id) {
+    this.setState(prevState => ({
+      subreddits: prevState.subreddits.filter(el => el != id)
+    }))
   }
 
   searchForSubreddit(subreddit) {
@@ -28,7 +39,7 @@ class RedditReader extends React.Component {
       let res = await fetch(url);
       let data = await res.json();
       return data;
-    }
+    };
 
     getSubreddit(subreddit)
       .then(data => {
@@ -40,21 +51,27 @@ class RedditReader extends React.Component {
       .catch(err => console.log(err));
   }
 
-  removeSubreddit(ele) {
-    console.log(`Remove called on ${ele}`);
-    this.setState((prevState, props) => ({
-      subreddits: prevState.subreddits.filter(el => el !== ele)
-    }));
-  }
-
   render() {
-    console.log(this.state.subreddits, 'STATE');
+    // console.log(this.state.subreddits, 'STATE');
     return (
       <div>
         <div className="row justify-contene-around">
-          <MySubreddits
-            subreddits={this.state.subreddits}
-            removeSubreddit={this.removeSubreddit} />
+          <div className="col-sm-12 col-md-6 text-center">
+            <h3>My Subreddits</h3>
+            <hr />
+            
+            {this.state.subreddits.map((sub, idx) =>
+              <div key={idx} className="row justify-content-center" style={{"marginBottom":"2px"}}>
+                <div className="col-8">
+                  {sub.name}
+                </div>
+                <div className="col-4">
+                  <button className="btn btn-danger" onClick={this.delete.bind(this, sub)}>Remove</button>
+                </div>
+              </div>
+            )}
+            
+          </div>
           <Search
             addSubreddit={this.addSubreddit}
             searchForSubreddit={this.searchForSubreddit} 
