@@ -4,8 +4,7 @@
   "scripts": {
     "build": "webpack",
     "build:watch": "webpack --watch",
-    "nodemon": "nodemon server/index.js",
-    "start": "node server/index.js",
+    "start": "nodemon index.js",
     "test": "mocha src/test/*.spec.js"
   },
   "dependencies": {
