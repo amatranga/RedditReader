@@ -1,5 +1,4 @@
 import React from 'react';
-import SearchResult from './SearchResult';
 
 class Search extends React.Component {
   constructor(props) {
@@ -25,19 +24,13 @@ class Search extends React.Component {
 
   render() {
     return (
-      <div className="col-sm-12 col-md-6 text-center">
+      <div className="col-sm-12 col-md-6 text-center" style={{"marginTop":"3em"}}>
         <div className="input-group">
           <input type="text" className="form-control" placeholder="Search for..." aria-label="Search for..." onChange={this.handleChange} />
           <span className="input-group-btn">
             <button className="btn btn-secondary" type="button" onClick={this.handleSubmit}>Search</button>
           </span>
         </div>
-        {this.props.searchResults.map((name, idx) => 
-          <SearchResult
-            key={idx}
-            name={name}
-            addSubreddit={this.props.addSubreddit} />
-        )}
       </div>
     );
   }
