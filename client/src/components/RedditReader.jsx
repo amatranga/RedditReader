@@ -1,17 +1,13 @@
 import React from 'react';
 import AllPosts from './AllPosts';
-// import Subreddit from './Subreddit';
 import Search from './Search';
 
 class RedditReader extends React.Component {
   constructor() {
     super();
     this.state = {
-      subreddits: [
-        {id: 0, name: 'News'},
-        {id: 1, name: 'Funny'},
-        {id: 2, name: 'Gifs'}       
-      ]
+      subreddits: [],
+      posts: []
     };
 
     this.addSubreddit = this.addSubreddit.bind(this);
@@ -28,9 +24,14 @@ class RedditReader extends React.Component {
   }
 
   delete(id) {
+    const filtered = this.state.subreddits.filter(el => el != id);
     this.setState(prevState => ({
       subreddits: prevState.subreddits.filter(el => el != id)
     }))
+    this.setState({posts: [], subreddits: []});
+    if (filtered.length > 0) {
+      filtered.forEach(el => this.searchForSubreddit(el.name));
+    }
   }
 
   searchForSubreddit(subreddit) {
@@ -43,19 +44,28 @@ class RedditReader extends React.Component {
 
     getSubreddit(subreddit)
       .then(data => {
-        const children = data.data.children;
+        const children = data.data.children.slice(0, 5);
         if (children.length > 0) {
           this.addSubreddit(subreddit);
+          const posts = this.state.posts.concat(children).sort((a,b) => a.data.created < b.data.created);
+          this.setState({posts});
         }
       })
       .catch(err => console.log(err));
   }
 
+  componentWillMount() {
+    this.searchForSubreddit('News');
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    this.state.subreddits.forEach(sub => this.searchForSubreddit(sub));
+  }
+
   render() {
-    // console.log(this.state.subreddits, 'STATE');
     return (
-      <div>
-        <div className="row justify-contene-around">
+      <div className="container container-fluid">
+        <div className="row justify-content-center">
           <div className="col-sm-12 col-md-6 text-center">
             <h3>My Subreddits</h3>
             <hr />
@@ -79,7 +89,7 @@ class RedditReader extends React.Component {
         </div>
         <hr />
         <div className="row justify-content-center">
-          <AllPosts />
+          <AllPosts posts={this.state.posts} />
         </div>
       </div>
     );

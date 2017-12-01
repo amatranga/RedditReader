@@ -1,9 +1,13 @@
 import React from 'react';
+import Post from './Post';
 
-const AllPosts = () => {
+const AllPosts = props => {
   return (
-    <div>
-      <h3>All Posts component</h3>
+    <div className="col text-center">
+      <h4>Latest Posts</h4>
+      {props.posts.map((post, idx) =>
+        <Post key={idx} post={post} />
+      )}
     </div>
   );
 }
